@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Antoine Laurans | Creative Developer</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Font: Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    
+    <style>
+        /* Base styles */
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #0a0a0a;
+            color: #e5e5e5;
+            /* Dotted grid background */
+            background-image: radial-gradient(rgba(200, 200, 200, 0.1) 1px, transparent 1px);
+            background-size: 20px 20px;
+            overflow-x: hidden; /* Prevent horizontal scroll from animations */
+        }
+
+        /* Custom gradient text */
+        .text-gradient {
+            background: linear-gradient(to right, #a855f7, #ec4899, #f59e0b);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-fill-color: transparent;
+        }
+
+        /* Glassmorphism card effect */
+        .glass-card {
+            background: rgba(17, 17, 17, 0.5);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+        }
+        
+        .glass-card:hover {
+            border-color: rgba(255, 255, 255, 0.3);
+            transform: translateY(-4px) scale(1.01);
+        }
+
+        /* Custom cursor */
+        #cursor-dot {
+            width: 8px;
+            height: 8px;
+            background-color: #f59e0b;
+            border-radius: 50%;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            pointer-events: none;
+            z-index: 9999;
+            transition: transform 0.2s ease-out;
+        }
+        #cursor-outline {
+            width: 40px;
+            height: 40px;
+            border: 2px solid #f59e0b;
+            border-radius: 50%;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            pointer-events: none;
+            z-index: 9999;
+            transition: all 0.3s ease-out;
+        }
+        
+        body:hover #cursor-outline {
+            opacity: 0.5;
+        }
+        
+        /* Cursor hover effect */
+        .cursor-hover {
+            transform: translate(-50%, -50%) scale(2.5);
+            opacity: 0.3;
+            background-color: #f59e0b;
+        }
+        .cursor-dot-hidden {
+            opacity: 0;
+            transform: translate(-50%, -50%) scale(0.5);
+        }
+
+        /* --- Scroll Animation Classes --- */
+        .scroll-animate {
+            opacity: 0;
+            transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+        }
+        
+        /* Animation variants */
+        .scroll-fade-in {
+            transform: translateY(30px);
+        }
+        .scroll-slide-left {
+            transform: translateX(-40px);
+        }
+        .scroll-slide-right {
+            transform: translateX(40px);
+        }
+
+        /* Visible state */
+        .scroll-animate-visible {
+            opacity: 1;
+            transform: translate(0, 0);
+        }
+        
+        /* Animation delays */
+        .delay-100 { transition-delay: 100ms; }
+        .delay-200 { transition-delay: 200ms; }
+        .delay-300 { transition-delay: 300ms; }
+        .delay-500 { transition-delay: 500ms; }
+
+        /* --- Marquee (Skills Ticker) --- */
+        .marquee {
+            overflow: hidden;
+            position: relative;
+            white-space: nowrap;
+        }
+        .marquee-content {
+            display: inline-block;
+            animation: marquee 30s linear infinite;
+        }
+        .marquee-content span {
+            font-size: 1.5rem; /* 24px */
+            font-weight: 700; /* bold */
+            padding: 0 2rem; /* px-8 */
+            color: rgba(229, 229, 229, 0.5); /* text-neutral-300/50 */
+        }
+        @keyframes marquee {
+            0% { transform: translateX(0%); }
+            100% { transform: translateX(-100%); }
+        }
+        
+        /* --- Vertical Timeline --- */
+        .timeline-container {
+            position: relative;
+        }
+        /* The vertical line */
+        .timeline-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 1rem;
+            height: 100%;
+            width: 3px;
+            background: linear-gradient(to bottom, #a855f7, #ec4899, #f59e0b);
+            opacity: 0.3;
+            /* Center on desktop */
+            @media (min-width: 768px) {
+                left: 50%;
+                transform: translateX(-50%);
+            }
+        }
+        
+        .timeline-item {
+            position: relative;
+            padding-left: 3rem; /* Space from the line */
+            /* Reset for desktop */
+            @media (min-width: 768px) {
+                width: 50%;
+                padding-left: 0;
+            }
+        }
+        
+        /* Position items left/right on desktop */
+        @media (min-width: 768px) {
+            .timeline-item-left {
+                padding-right: 2rem;
+                text-align: right;
+                left: 0;
+            }
+            .timeline-item-right {
+                padding-left: 2rem;
+                left: 50%;
+            }
+            
+            /* Adjust dot for left/right items */
+            .timeline-item-left .timeline-dot {
+                right: -9px;
+                left: auto;
+            }
+        }
+
+        /* The dot on the line */
+        .timeline-dot {
+            content: '';
+            position: absolute;
+            top: 0.25rem; /* align with text */
+            left: 0.625rem; /* (1rem - (14px/2)) + 1px correction */
+            width: 18px;
+            height: 18px;
+            border: 3px solid #f59e0b;
+            border-radius: 50%;
+            background-color: #0a0a0a;
+            z-index: 10;
+            
+            @media (min-width: 768px) {
+                left: -9px; /* (50% - (18px/2)) */
+            }
+        }
+
+    </style>
+</head>
+<body class="antialiased">
+
+    <!-- Custom Cursor Elements -->
+    <div id="cursor-dot" class="hidden md:block"></div>
+    <div id="cursor-outline" class="hidden md:block"></div>
+
+    <!-- Header -->
+    <header class="fixed top-0 left-0 right-0 z-40 bg-opacity-60 backdrop-blur-md backdrop-filter">
+        <nav class="container mx-auto max-w-6xl px-6 py-4 flex justify-between items-center">
+            <a href="#" class="text-2xl font-black text-gradient cursor-link">AL</a>
+            <ul class="flex items-center space-x-4 md:space-x-8">
+                <li><a href="#projects" class="text-neutral-300 hover:text-white transition-colors cursor-link">Projects</a></li>
+                <li><a href="#experience" class="text-neutral-300 hover:text-white transition-colors cursor-link">Experience</a></li>
+                <li><a href="#contact" class="px-4 py-2 text-sm font-medium bg-white text-black rounded-full hover:bg-neutral-200 transition-colors cursor-link">Contact</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <!-- Main Content -->
+    <main class="container mx-auto max-w-6xl px-6">
+
+        <!-- Section 1: Hero -->
+        <section class="min-h-screen h-auto flex flex-col justify-center items-start pt-32 pb-16">
+            <h1 class="text-5xl sm:text-6xl md:text-8xl font-black mb-4 scroll-animate scroll-fade-in">
+                Antoine Laurans
+            </h1>
+            <h2 class="text-3xl sm:text-4xl md:text-6xl font-bold mb-8 scroll-animate scroll-fade-in delay-100">
+                <span class="text-gradient">Creative Mobile Developer</span>
+            </h2>
+            <p class="text-lg md:text-xl text-neutral-300 max-w-2xl mb-10 scroll-animate scroll-fade-in delay-200">
+                I'm a 4th-year Master's student crafting fluid, high-performance mobile experiences. Expert in <b class="text-white">Swift, C, and C++</b>, I turn complex logic into intuitive and elegant applications.
+            </p>
+            <div class="flex flex-col sm:flex-row gap-4 scroll-animate scroll-fade-in delay-300">
+                <a href="#projects" class="px-8 py-3 text-lg font-semibold bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-full hover:from-purple-700 hover:to-pink-700 transition-all shadow-lg shadow-pink-500/30 cursor-link">
+                    View My Work
+                </a>
+                <a href="#contact" class="px-8 py-3 text-lg font-semibold bg-neutral-800 text-neutral-200 rounded-full hover:bg-neutral-700 transition-colors cursor-link">
+                    Get In Touch
+                </a>
+            </div>
+            <div class="flex items-center gap-3 mt-10 scroll-animate scroll-fade-in delay-500">
+                <span class="relative flex h-3 w-3">
+                    <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
+                    <span class="relative inline-flex rounded-full h-3 w-3 bg-green-500"></span>
+                </span>
+                <span class="text-green-400 font-medium">Available for new opportunities</span>
+            </div>
+        </section>
+
+        <!-- Section 2: Skills Marquee -->
+        <section class="py-16 md:py-24 border-y border-neutral-800">
+            <div class="marquee">
+                <div class="marquee-content">
+                    <!-- Duplicate content for seamless loop -->
+                    <span>SWIFT</span>
+                    <span>IOS DEVELOPMENT</span>
+                    <span>C</span>
+                    <span>C++</span>
+                    <span>LARAVEL</span>
+                    <span>REACT NATIVE</span>
+                    <span>PHP</span>
+                    <span>PROBLEM SOLVER</span>
+                    <span>SWIFT</span>
+                    <span>IOS DEVELOPMENT</span>
+                    <span>C</span>
+                    <span>C++</span>
+                    <span>LARAVEL</span>
+                    <span>REACT NATIVE</span>
+                    <span>PHP</span>
+                    <span>PROBLEM SOLVER</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 3: Projects -->
+        <section id="projects" class="py-24 md:py-32">
+            <h2 class="text-4xl md:text-6xl font-black text-center mb-16 scroll-animate scroll-fade-in">
+                Selected <span class="text-gradient">Creations</span>
+            </h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                
+                <!-- Project 1: Flowz -->
+                <div class="glass-card rounded-2xl p-8 scroll-animate scroll-fade-in delay-100">
+                    <div class="flex flex-wrap gap-2 mb-4">
+                        <span class="px-3 py-1 text-xs font-medium text-purple-300 bg-purple-900/50 rounded-full">Swift</span>
+                        <span class="px-3 py-1 text-xs font-medium text-blue-300 bg-blue-900/50 rounded-full">React Native</span>
+                        <span class="px-3 py-1 text-xs font-medium text-red-300 bg-red-900/50 rounded-full">Laravel</span>
+                        <span class="px-3 py-1 text-xs font-medium text-indigo-300 bg-indigo-900/50 rounded-full">PHP</span>
+                    </div>
+                    <h3 class="text-3xl font-bold mb-3 text-white">Flowz</h3>
+                    <p class="text-neutral-300 mb-6">
+                        An IFTTT/Zapier-style action-reaction automation platform. Architected with a Laravel/PHP backend and hybrid mobile clients in Swift and React Native.
+                    </p>
+                    <div class="flex gap-4">
+                        <a href="#" class="font-medium text-purple-400 hover:text-purple-300 transition-colors cursor-link">GitHub Repo &rarr;</a>
+                    </div>
+                </div>
+
+                <!-- Project 2: Placeholder -->
+                <div class="glass-card rounded-2xl p-8 scroll-animate scroll-fade-in delay-200">
+                    <div class="flex flex-wrap gap-2 mb-4">
+                        <span class="px-3 py-1 text-xs font-medium text-gray-300 bg-gray-700/50 rounded-full">C</span>
+                        <span class="px-3 py-1 text-xs font-medium text-blue-300 bg-blue-900/50 rounded-full">C++</span>
+                        <span class="px-3 py-1 text-xs font-medium text-yellow-300 bg-yellow-900/50 rounded-full">Low-Level</span>
+                    </div>
+                    <h3 class="text-3xl font-bold mb-3 text-white">Core-C Graphics</h3>
+                    <p class="text-neutral-300 mb-6">
+                        A lightweight 2D rendering engine built from scratch in pure C. Explores low-level memory management, rendering pipelines, and performance optimization.
+                    </p>
+                    <div class="flex gap-4">
+                        <a href="#" class="font-medium text-purple-400 hover:text-purple-300 transition-colors cursor-link">View Source &rarr;</a>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- Section 4: Experience -->
+        <section id="experience" class="py-24 md:py-32">
+            <h2 class="text-4xl md:text-6xl font-black text-center mb-24 scroll-animate scroll-fade-in">
+                Career <span class="text-gradient">Timeline</span>
+            </h2>
+            
+            <div class="timeline-container max-w-4xl mx-auto">
+                <!-- Item 1: Crédit Agricole -->
+                <div class="timeline-item timeline-item-right mb-12 scroll-animate scroll-slide-right">
+                    <div class="timeline-dot"></div>
+                    <div class="glass-card rounded-xl p-6">
+                        <time class="text-sm font-semibold text-yellow-400 mb-1 block">Apr 2025 - Present</time>
+                        <h3 class="text-xl font-bold text-white mb-1">iOS Mobile App Developer (Intern)</h3>
+                        <p class="text-md font-medium text-neutral-300 mb-2">Crédit Agricole Tech & Services</p>
+                        <p class="text-neutral-400 text-sm">
+                            Developing and maintaining features for high-traffic, customer-facing iOS applications using native Swift.
+                        </p>
+                    </div>
+                </div>
+                
+                <!-- Item 2: KIABI -->
+                <div class="timeline-item timeline-item-left mb-12 scroll-animate scroll-slide-left">
+                    <div class="timeline-dot"></div>
+                    <div class="glass-card rounded-xl p-6">
+                        <time class="text-sm font-semibold text-neutral-400 mb-1 block">Jul 2024 - Dec 2024</time>
+                        <h3 class="text-xl font-bold text-white mb-1">Sales Associate</h3>
+                        <p class="text-md font-medium text-neutral-300 mb-2">KIABI</p>
+                        <p class="text-neutral-400 text-sm">
+                            Honed client relations, CRM, and sales management skills in a fast-paced retail environment.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Item 3: CHU de Montpellier -->
+                <div class="timeline-item timeline-item-right mb-12 scroll-animate scroll-slide-right">
+                    <div class="timeline-dot"></div>
+                    <div class="glass-card rounded-xl p-6">
+                        <time class="text-sm font-semibold text-neutral-400 mb-1 block">Aug 2023 - Dec 2023</time>
+                        <h3 class="text-xl font-bold text-white mb-1">Software Development Intern</h3>
+                        <p class="text-md font-medium text-neutral-300 mb-2">CHU de Montpellier</p>
+                        <p class="text-neutral-400 text-sm">
+                            Contributed to internal program development, focusing on software logic, full-cycle conception, coding, and testing.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 5: Education -->
+        <section id="education" class="py-24 md:py-32">
+            <h2 class="text-4xl md:text-6xl font-black text-center mb-16 scroll-animate scroll-fade-in">
+                Education & <span class="text-gradient">Learning</span>
+            </h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <!-- Epitech -->
+                <div class="glass-card rounded-2xl p-8 scroll-animate scroll-fade-in delay-100">
+                    <h3 class="text-2xl font-bold text-white mb-2">Epitech</h3>
+                    <p class="text-lg font-medium text-purple-300 mb-2">Master in Computer Science</p>
+                    <p class="text-neutral-400">2022 - 2027 | Montpellier, France</p>
+                    <p class="text-neutral-300 mt-4">Core curriculum in software engineering, mobile development (Swift), and systems programming.</p>
+                </div>
+                <!-- Cal State -->
+                <div class="glass-card rounded-2xl p-8 scroll-animate scroll-fade-in delay-200">
+                    <h3 class="text-2xl font-bold text-white mb-2">California State University</h3>
+                    <p class="text-lg font-medium text-purple-300 mb-2">Master in Computer Science</p>
+                    <p class="text-neutral-400">2025 - 2026 | San Marcos, USA</p>
+                    <p class="text-neutral-300 mt-4">International exchange program focusing on specialized computer science topics and applications.</p>
+                </div>
+            </div>
+        </section>
+
+
+        <!-- Section 6: Contact -->
+        <section id="contact" class="py-24 md:py-32 text-center">
+            <h2 class="text-4xl md:text-6xl font-black mb-6 scroll-animate scroll-fade-in">
+                Let's <span class="text-gradient">Connect</span>
+            </h2>
+            <p class="text-lg md:text-xl text-neutral-300 max-w-2xl mx-auto mb-10 scroll-animate scroll-fade-in delay-100">
+                I'm actively seeking new opportunities and collaborations. Whether you have a project in mind or just want to discuss technology, my inbox is always open.
+            </p>
+            <a href="mailto:laurans.contact@gmail.com" 
+               class="text-2xl md:text-4xl font-bold text-white relative w-fit mx-auto
+                      after:content-[''] after:absolute after:left-0 after:-bottom-2 after:w-full after:h-1 
+                      after:bg-gradient-to-r after:from-purple-600 after:to-pink-600
+                      after:transition-transform after:duration-300 after:scale-x-100 hover:after:scale-x-0
+                      cursor-link scroll-animate scroll-fade-in delay-200"
+            >
+                laurans.contact@gmail.com
+            </a>
+            
+            <div class="flex justify-center gap-8 mt-16 scroll-animate scroll-fade-in delay-300">
+                <a href="https://www.linkedin.com/in/antoine-laurans/" target="_blank" rel="noopener noreferrer" class="text-neutral-400 hover:text-white transition-colors cursor-link" title="LinkedIn">
+                    <svg class="w-8 h-8" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/></svg>
+                </a>
+                <a href="https://github.com/Azeras007" target="_blank" rel="noopener noreferrer" class="text-neutral-400 hover:text-white transition-colors cursor-link" title="GitHub">
+                    <svg class="w-8 h-8" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.109-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.91 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
+                </a>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="text-center py-12 border-t border-neutral-800">
+        <p class="text-neutral-500">
+            Designed & Coded with <span class="text-red-500">&hearts;</span> by Antoine Laurans
+        </p>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+
+            // --- Custom Cursor Logic ---
+            const cursorDot = document.querySelector('#cursor-dot');
+            const cursorOutline = document.querySelector('#cursor-outline');
+
+            if (cursorDot && cursorOutline) {
+                window.addEventListener('mousemove', (e) => {
+                    const posX = e.clientX;
+                    const posY = e.clientY;
+
+                    cursorDot.style.left = `${posX}px`;
+                    cursorDot.style.top = `${posY}px`;
+
+                    cursorOutline.animate({
+                        left: `${posX}px`,
+                        top: `${posY}px`
+                    }, { duration: 500, fill: 'forwards' });
+                });
+                
+                // Add hover effects
+                document.querySelectorAll('.cursor-link, button, a').forEach(el => {
+                    el.addEventListener('mouseenter', () => {
+                        cursorOutline.classList.add('cursor-hover');
+                        cursorDot.classList.add('cursor-dot-hidden');
+                    });
+                    el.addEventListener('mouseleave', () => {
+                        cursorOutline.classList.remove('cursor-hover');
+                        cursorDot.classList.remove('cursor-dot-hidden');
+                    });
+                });
+            }
+
+            // --- Scroll Animation Logic ---
+            const scrollElements = document.querySelectorAll('.scroll-animate');
+
+            if (scrollElements.length > 0) {
+                const observer = new IntersectionObserver((entries) => {
+                    entries.forEach(entry => {
+                        if (entry.isIntersecting) {
+                            entry.target.classList.add('scroll-animate-visible');
+                            observer.unobserve(entry.target); // Animate only once
+                        }
+                    });
+                }, {
+                    threshold: 0.1 // Trigger when 10% of the element is visible
+                });
+
+                scrollElements.forEach(el => {
+                    observer.observe(el);
+                });
+            }
+        });
+    </script>
+</body>
+</html>
